@@ -1,0 +1,100 @@
+Il brand "FunFactory" è locato nello stand numero "85", è stato fondato da "Luca Russo" nel "1973" e si occupa soprattutto di "giocattoli".
+Il brand "DrivePro" è locato nello stand numero "19", è stato fondato da "Martina Galli" nel "1959" e si occupa soprattutto di "auto e moto".
+Il brand "UrbanGents" è locato nello stand numero "16", è stato fondato da "Martina De Luca" nel "1999" e si occupa soprattutto di "abbigliamento maschile".
+Il brand "KitchenEssence" è locato nello stand numero "38", è stato fondato da "Sofia Greco" nel "2020" e si occupa soprattutto di "cucina".
+Il brand "PlantPal" è locato nello stand numero "73", è stato fondato da "Stefano Bianchi" nel "1970" e si occupa soprattutto di "giardinaggio".
+Il brand "ArtVision" è locato nello stand numero "63", è stato fondato da "Luca Romano" nel "1964" e si occupa soprattutto di "arte e design".
+Il brand "WellnessHub" è locato nello stand numero "11", è stato fondato da "Sofia Testa" nel "1957" e si occupa soprattutto di "salute e benessere".
+Il brand "Innovatech" è locato nello stand numero "26", è stato fondato da "Sofia Serra" nel "1959" e si occupa soprattutto di "tecnologia".
+Il brand "PlayStrong" è locato nello stand numero "14", è stato fondato da "Alice Rossi" nel "2009" e si occupa soprattutto di "sport".
+Il brand "TravelMore" è locato nello stand numero "50", è stato fondato da "Davide Serra" nel "2005" e si occupa soprattutto di "viaggi".
+Il brand "PlayStrong" è locato nello stand numero "40", è stato fondato da "Francesco Bianchi" nel "1982" e si occupa soprattutto di "sport".
+Il brand "Chic&Co" è locato nello stand numero "66", è stato fondato da "Elena Conti" nel "2012" e si occupa soprattutto di "abbigliamento femminile".
+Il brand "GreenThumb" è locato nello stand numero "77", è stato fondato da "Elena Mancini" nel "1997" e si occupa soprattutto di "giardinaggio".
+Il brand "PharmaPlus" è locato nello stand numero "98", è stato fondato da "Federico Greco" nel "2008" e si occupa soprattutto di "farmaci".
+Il brand "VitalTouch" è locato nello stand numero "71", è stato fondato da "Sofia Bruno" nel "1969" e si occupa soprattutto di "salute e benessere".
+Il brand "Chef'sChoice" è locato nello stand numero "95", è stato fondato da "Luca De Luca" nel "1956" e si occupa soprattutto di "cucina".
+Il brand "GardenEase" è locato nello stand numero "65", è stato fondato da "Alice Bianchi" nel "1988" e si occupa soprattutto di "giardinaggio".
+Il brand "TuneCraft" è locato nello stand numero "83", è stato fondato da "Giulia Romano" nel "1968" e si occupa soprattutto di "strumenti musicali".
+Il brand "Innovatech" è locato nello stand numero "100", è stato fondato da "Stefano Mancini" nel "1988" e si occupa soprattutto di "tecnologia".
+Il brand "Chic&Co" è locato nello stand numero "48", è stato fondato da "Alessandra Moretti" nel "2015" e si occupa soprattutto di "abbigliamento femminile".
+Il brand "Elegantia" è locato nello stand numero "57", è stato fondato da "Davide Ferrari" nel "1951" e si occupa soprattutto di "abbigliamento femminile".
+Il brand "VitalTouch" è locato nello stand numero "56", è stato fondato da "Giulia Barbieri" nel "1982" e si occupa soprattutto di "salute e benessere".
+Il brand "TuneCraft" è locato nello stand numero "46", è stato fondato da "Matteo Mancini" nel "1983" e si occupa soprattutto di "strumenti musicali".
+Il brand "DIYPro" è locato nello stand numero "94", è stato fondato da "Gabriele De Luca" nel "1984" e si occupa soprattutto di "bricolage".
+Il brand "TripTales" è locato nello stand numero "2", è stato fondato da "Federico Russo" nel "2018" e si occupa soprattutto di "viaggi".
+Il brand "UrbanGents" è locato nello stand numero "69", è stato fondato da "Elena Colombo" nel "1968" e si occupa soprattutto di "abbigliamento maschile".
+Il brand "Chic&Co" è locato nello stand numero "42", è stato fondato da "Giulia Galli" nel "1955" e si occupa soprattutto di "abbigliamento femminile".
+Il brand "UrbanGents" è locato nello stand numero "96", è stato fondato da "Marco Colombo" nel "2013" e si occupa soprattutto di "abbigliamento maschile".
+Il brand "Monelli" è locato nello stand numero "87", è stato fondato da "Alessandra Esposito" nel "1972" e si occupa soprattutto di "abbigliamento bambini".
+Il brand "WanderLust" è locato nello stand numero "44", è stato fondato da "Valeria Colombo" nel "2009" e si occupa soprattutto di "viaggi".
+Il brand "DrivePro" è locato nello stand numero "33", è stato fondato da "Ilaria Galli" nel "2000" e si occupa soprattutto di "auto e moto".
+Il brand "GlamGoddess" è locato nello stand numero "36", è stato fondato da "Martina Bianchi" nel "1963" e si occupa soprattutto di "abbigliamento femminile".
+Il brand "TinyTrend" è locato nello stand numero "8", è stato fondato da "Giulia Costa" nel "2015" e si occupa soprattutto di "abbigliamento bambini".
+Il brand "TripTales" è locato nello stand numero "90", è stato fondato da "Simone Esposito" nel "1960" e si occupa soprattutto di "viaggi".
+Il brand "TravelMore" è locato nello stand numero "3", è stato fondato da "Marco Barbieri" nel "1984" e si occupa soprattutto di "viaggi".
+Il brand "PlantPal" è locato nello stand numero "25", è stato fondato da "Elena Moretti" nel "1960" e si occupa soprattutto di "giardinaggio".
+Il brand "WanderLust" è locato nello stand numero "9", è stato fondato da "Stefano Rossi" nel "2005" e si occupa soprattutto di "viaggi".
+Il brand "Monelli" è locato nello stand numero "59", è stato fondato da "Chiara Colombo" nel "2024" e si occupa soprattutto di "abbigliamento bambini".
+Il brand "DigitalX" è locato nello stand numero "32", è stato fondato da "Elena Marini" nel "1995" e si occupa soprattutto di "tecnologia".
+Il brand "ToyVerse" è locato nello stand numero "27", è stato fondato da "Luca Colombo" nel "2018" e si occupa soprattutto di "giocattoli".
+Il brand "PlantPal" è locato nello stand numero "17", è stato fondato da "Andrea Marini" nel "2001" e si occupa soprattutto di "giardinaggio".
+Il brand "DIYPro" è locato nello stand numero "18", è stato fondato da "Marco Moretti" nel "1974" e si occupa soprattutto di "bricolage".
+Il brand "Innovatech" è locato nello stand numero "97", è stato fondato da "Francesco Costa" nel "1952" e si occupa soprattutto di "tecnologia".
+Il brand "PharmaPlus" è locato nello stand numero "35", è stato fondato da "Sofia Bianchi" nel "1954" e si occupa soprattutto di "farmaci".
+Il brand "Chic&Co" è locato nello stand numero "76", è stato fondato da "Laura Bruno" nel "2001" e si occupa soprattutto di "abbigliamento femminile".
+Il brand "TechWorld" è locato nello stand numero "39", è stato fondato da "Elena Moretti" nel "2011" e si occupa soprattutto di "tecnologia".
+Il brand "Chic&Co" è locato nello stand numero "51", è stato fondato da "Andrea Conti" nel "1981" e si occupa soprattutto di "abbigliamento femminile".
+Il brand "DigitalX" è locato nello stand numero "88", è stato fondato da "Marco Galli" nel "1957" e si occupa soprattutto di "tecnologia".
+Il brand "SoundHarmony" è locato nello stand numero "54", è stato fondato da "Martina De Luca" nel "1965" e si occupa soprattutto di "strumenti musicali".
+Il brand "Monelli" è locato nello stand numero "7", è stato fondato da "Simone Esposito" nel "1957" e si occupa soprattutto di "abbigliamento bambini".
+Il brand "PetLovers" è locato nello stand numero "53", è stato fondato da "Federico Rossi" nel "1993" e si occupa soprattutto di "animali domestici".
+Il brand "Chef'sChoice" è locato nello stand numero "84", è stato fondato da "Simone Bruno" nel "1959" e si occupa soprattutto di "cucina".
+Il brand "PawPal" è locato nello stand numero "64", è stato fondato da "Valeria Colombo" nel "1969" e si occupa soprattutto di "animali domestici".
+Il brand "TripTales" è locato nello stand numero "12", è stato fondato da "Alessandra Galli" nel "1985" e si occupa soprattutto di "viaggi".
+Il brand "GreenThumb" è locato nello stand numero "80", è stato fondato da "Stefano Bianchi" nel "1979" e si occupa soprattutto di "giardinaggio".
+Il brand "PageTurners" è locato nello stand numero "75", è stato fondato da "Davide Galli" nel "2009" e si occupa soprattutto di "libri".
+Il brand "AutoElite" è locato nello stand numero "43", è stato fondato da "Davide Rossi" nel "1999" e si occupa soprattutto di "auto e moto".
+Il brand "ComfortZone" è locato nello stand numero "82", è stato fondato da "Andrea Moretti" nel "2001" e si occupa soprattutto di "casa".
+Il brand "HomeStyle" è locato nello stand numero "10", è stato fondato da "Laura Moretti" nel "1964" e si occupa soprattutto di "casa".
+Il brand "ArtVision" è locato nello stand numero "21", è stato fondato da "Alessandra Russo" nel "1963" e si occupa soprattutto di "arte e design".
+Il brand "DIYPro" è locato nello stand numero "58", è stato fondato da "Gabriele Barbieri" nel "1964" e si occupa soprattutto di "bricolage".
+Il brand "DigitalX" è locato nello stand numero "28", è stato fondato da "Chiara Ricci" nel "1989" e si occupa soprattutto di "tecnologia".
+Il brand "CreativeHub" è locato nello stand numero "52", è stato fondato da "Giulia Barbieri" nel "1970" e si occupa soprattutto di "arte e design".
+Il brand "CureTrust" è locato nello stand numero "91", è stato fondato da "Andrea Mancini" nel "2021" e si occupa soprattutto di "farmaci".
+Il brand "BricoForce" è locato nello stand numero "22", è stato fondato da "Marco Bianchi" nel "1977" e si occupa soprattutto di "bricolage".
+Il brand "HomeStyle" è locato nello stand numero "60", è stato fondato da "Davide Romano" nel "1981" e si occupa soprattutto di "casa".
+Il brand "DiamondCraft" è locato nello stand numero "74", è stato fondato da "Simone Esposito" nel "2016" e si occupa soprattutto di "gioielli".
+Il brand "PlayStrong" è locato nello stand numero "41", è stato fondato da "Sofia Galli" nel "1987" e si occupa soprattutto di "sport".
+Il brand "CookMaster" è locato nello stand numero "15", è stato fondato da "Alessandra Costa" nel "2014" e si occupa soprattutto di "cucina".
+Il brand "DapperWear" è locato nello stand numero "49", è stato fondato da "Ilaria Marini" nel "1965" e si occupa soprattutto di "abbigliamento maschile".
+Il brand "TechWorld" è locato nello stand numero "30", è stato fondato da "Ilaria Testa" nel "1976" e si occupa soprattutto di "tecnologia".
+Il brand "TripTales" è locato nello stand numero "55", è stato fondato da "Gabriele Galli" nel "1962" e si occupa soprattutto di "viaggi".
+Il brand "VitalTouch" è locato nello stand numero "99", è stato fondato da "Alessandra Testa" nel "2023" e si occupa soprattutto di "salute e benessere".
+Il brand "WanderLust" è locato nello stand numero "24", è stato fondato da "Alessandra Galli" nel "2012" e si occupa soprattutto di "viaggi".
+Il brand "HomeStyle" è locato nello stand numero "37", è stato fondato da "Marco Russo" nel "1994" e si occupa soprattutto di "casa".
+Il brand "HealthyLife" è locato nello stand numero "13", è stato fondato da "Laura Bianchi" nel "2021" e si occupa soprattutto di "salute e benessere".
+Il brand "ToyVerse" è locato nello stand numero "6", è stato fondato da "Chiara Rossi" nel "1987" e si occupa soprattutto di "giocattoli".
+Il brand "CasaBella" è locato nello stand numero "4", è stato fondato da "Martina Bruno" nel "1964" e si occupa soprattutto di "casa".
+Il brand "FixIt" è locato nello stand numero "79", è stato fondato da "Federico Galli" nel "2023" e si occupa soprattutto di "bricolage".
+Il brand "UrbanGents" è locato nello stand numero "45", è stato fondato da "Martina Russo" nel "1980" e si occupa soprattutto di "abbigliamento maschile".
+Il brand "BookHaven" è locato nello stand numero "31", è stato fondato da "Giulia Ricci" nel "1970" e si occupa soprattutto di "libri".
+Il brand "GlamGoddess" è locato nello stand numero "67", è stato fondato da "Federico Ricci" nel "1976" e si occupa soprattutto di "abbigliamento femminile".
+Il brand "SoundHarmony" è locato nello stand numero "93", è stato fondato da "Giulia Rossi" nel "1956" e si occupa soprattutto di "strumenti musicali".
+Il brand "PageTurners" è locato nello stand numero "1", è stato fondato da "Andrea Bianchi" nel "2014" e si occupa soprattutto di "libri".
+Il brand "CureTrust" è locato nello stand numero "34", è stato fondato da "Martina De Luca" nel "2011" e si occupa soprattutto di "farmaci".
+Il brand "BookHaven" è locato nello stand numero "92", è stato fondato da "Federico Greco" nel "2006" e si occupa soprattutto di "libri".
+Il brand "Innovatech" è locato nello stand numero "86", è stato fondato da "Chiara Ricci" nel "1971" e si occupa soprattutto di "tecnologia".
+Il brand "HealthyLife" è locato nello stand numero "23", è stato fondato da "Laura Costa" nel "1980" e si occupa soprattutto di "salute e benessere".
+Il brand "FixIt" è locato nello stand numero "29", è stato fondato da "Simone Rossi" nel "2016" e si occupa soprattutto di "bricolage".
+Il brand "KiddoStyle" è locato nello stand numero "5", è stato fondato da "Elena Rossi" nel "1951" e si occupa soprattutto di "abbigliamento bambini".
+Il brand "TuneCraft" è locato nello stand numero "20", è stato fondato da "Martina Ricci" nel "1983" e si occupa soprattutto di "strumenti musicali".
+Il brand "GoldSpark" è locato nello stand numero "81", è stato fondato da "Davide Galli" nel "1972" e si occupa soprattutto di "gioielli".
+Il brand "BookHaven" è locato nello stand numero "62", è stato fondato da "Andrea Ricci" nel "1965" e si occupa soprattutto di "libri".
+Il brand "BookHaven" è locato nello stand numero "89", è stato fondato da "Gabriele Ricci" nel "1961" e si occupa soprattutto di "libri".
+Il brand "TravelMore" è locato nello stand numero "68", è stato fondato da "Federico Mancini" nel "1971" e si occupa soprattutto di "viaggi".
+Il brand "HomeStyle" è locato nello stand numero "47", è stato fondato da "Gabriele Bianchi" nel "1976" e si occupa soprattutto di "casa".
+Il brand "KiddoStyle" è locato nello stand numero "72", è stato fondato da "Marco Bianchi" nel "1975" e si occupa soprattutto di "abbigliamento bambini".
+Il brand "CookMaster" è locato nello stand numero "70", è stato fondato da "Federico Rossi" nel "2011" e si occupa soprattutto di "cucina".
+Il brand "SoundHarmony" è locato nello stand numero "61", è stato fondato da "Ilaria Conti" nel "1968" e si occupa soprattutto di "strumenti musicali".
+Il brand "LitWorld" è locato nello stand numero "78", è stato fondato da "Giulia Bruno" nel "1996" e si occupa soprattutto di "libri".
