@@ -5,3 +5,7 @@ piper
 __pycache__
 
 chat_histories/
+
+chat_history/
+
+vector_databases/
