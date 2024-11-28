@@ -1,257 +1,192 @@
 import os
 import gc
-from datetime import datetime
+import time
 import torch
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from transformers import AutoTokenizer
+from transformers import GPT2TokenizerFast
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_chroma import Chroma
+from langchain_community.vectorstores import Chroma
+from langchain.schema import Document
 
 class DocumentProcessor:
     def __init__(self):
-        # Configurazioni base
-        self.base_dir = "vector_databases"
-        self.embedding_model = "sentence-transformers/all-MiniLM-L6-v2"
-        self.tokenizer = "gpt2"
-        self.batch_size = 32
-        self.chunk_size = 500
-        self.chunk_overlap = 50
+        self.base_directory = "chromadb"
+        self.prefix_db_path = "chroma_"
+        self.suffix_db_path = "_db_"
         
-        # Inizializzazione componenti
-        self._initialize_components()
-        
-    def _initialize_components(self):
-        """Inizializza i componenti base del processor"""
-        os.makedirs(self.base_dir, exist_ok=True)
-        self.db_paths = self._scan_existing_databases()
-        self.embedding_function = HuggingFaceEmbeddings(model_name=self.embedding_model)
-        self.tokenizer = AutoTokenizer.from_pretrained(self.tokenizer)
-        self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=self.chunk_size,
-            chunk_overlap=self.chunk_overlap,
-            separators=["\n\n", "\n", " ", ""]
+        self.embedding_function = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-mpnet-base-v2",
+            model_kwargs={'device': 'cuda' if torch.cuda.is_available() else 'cpu'}
         )
-        self.current_db = None
-        self.current_db_path = None
-        
-        # Carica automaticamente l'ultimo database se disponibile
-        self._ensure_database_loaded()
-    
-    def _ensure_database_loaded(self) -> bool:
-        """Assicura che ci sia un database caricato e utilizzabile"""
-        if self.current_db is not None:
-            return True
-            
-        # Tenta di caricare l'ultimo database disponibile
-        if self.db_paths:
-            return self.load_database(self.db_paths[-1])
-            
-        # Se non ci sono database, ne crea uno nuovo
-        return self.initialize_new_database() is not None
-    
-    def similarity_search(self, query: str, k: int = 5):
-        """Esegue la ricerca di similarità assicurando che il database sia caricato"""
-        if not self._ensure_database_loaded():
-            raise RuntimeError("Impossibile inizializzare o caricare un database")
-            
-        return self.current_db.similarity_search(query, k=k)
-    
+
+        tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+
+        self.text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=100,  # chunk_size=100 e chunk_overlap=50 sono valori adatti per la ricerca precisa ad esempio in elenchi. Per catturare più contesto per documenti descrittivi si consigliano valori più alti, ad esempio chunk_size=500 e chunk_overlap=200
+            chunk_overlap=50,
+            length_function=lambda text: len(tokenizer.encode(text)),
+            separators=["\n\n", "\n", ".", "!", "?", ",", " "]
+        )
+        self.batch_size = 20
+        self.db_paths = []
+
+
     def _clear_memory(self):
-        """Pulisce la memoria GPU e CPU"""
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
-            torch.cuda.synchronize()
-        
-        # Forza la garbage collection
+        gc.collect()
         gc.collect()
 
-    def _scan_existing_databases(self):
-        """Scansiona la directory base per trovare i database esistenti"""
-        db_paths = []
-        if os.path.exists(self.base_dir):
-            # Ottiene tutte le sottodirectory che iniziano con 'db_'
-            for item in os.listdir(self.base_dir):
-                full_path = os.path.join(self.base_dir, item)
-                if os.path.isdir(full_path) and item.startswith('db_'):
-                    db_paths.append(full_path)
-        
-        # Ordina i percorsi per avere i database più recenti alla fine
-        db_paths.sort()
-        return db_paths
-
     def initialize_new_database(self):
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        db_name = f"db_{timestamp}"
-        db_path = os.path.join(self.base_dir, db_name)
-        os.makedirs(db_path, exist_ok=True)
-        
-        self.db_paths.append(db_path)
-        self.current_db_path = db_path
-        
-        # Initialize Chroma with client_settings for persistence
-        self.current_db = Chroma(
-            persist_directory=db_path,
-            embedding_function=self.embedding_function,
-            collection_name="documents"  # Add a collection name
-        )
-        
-        return self.current_db
+        """Inizializza una nuova directory del database con timestamp"""
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        self.base_directory = f"chroma_dbs_{timestamp}"
+        os.makedirs(self.base_directory, exist_ok=True)
+        return self.base_directory
 
     def _create_db_for_batch(self, docs, batch_number):
         try:
-            if self.current_db is None:
-                raise ValueError("current_db non è stato inizializzato")
+            db_path = os.path.join(self.base_directory, f"db_batch_{batch_number}")
             
-            print(f"Creazione database per il batch {batch_number}")
-            
-            # Create Document objects in the format Chroma expects
-            ids = [f"doc_{batch_number}_{idx}" for idx in range(len(docs))]
-            texts = [doc['text'] for doc in docs]
-            metadatas = [doc['metadata'] for doc in docs]
-            
-            # Add documents to the existing database with explicit IDs
-            self.current_db.add_texts(
-                metadatas=metadatas,
-                texts=texts,
-                ids=ids
+            vector_store = Chroma.from_documents(
+                documents=docs,
+                embedding=self.embedding_function,
+                persist_directory=db_path
             )
             
+            self.db_paths.append(db_path)
             return True
-            
         except Exception as e:
-            print(f"Errore nella creazione del batch {batch_number}: {str(e)}")
+            print(f"Error creating database for batch {batch_number}: {e}")
             return False
 
     def process_documents(self, file_paths):
-        # Verifica se ci sono file da processare
+        """Crea il database vettoriale dai file caricati"""
         if not file_paths:
-            print("Nessun file da processare")
+            print("No files to process")
             return False
         
-        try:
-            # Inizializza una nuova directory del database e assicurati che current_db sia impostato
-            self.current_db = self.initialize_new_database()
-            print(f"Inizializzato nuovo database in: {self.current_db_path}")
-            total_chunks_processed = 0
+        # Inizializza una nuova directory del database prima di processare i documenti
+        self.initialize_new_database()
+        print(f"Creating new database in: {self.base_directory}")
             
-            # Itera attraverso ciascun file
-            for file_path in file_paths:
-                try:
-                    # Legge il contenuto del file
-                    with open(file_path, 'r', encoding='utf-8') as file:
-                        content = file.read()
+        total_chunks_processed = 0
+        batch_number = len(self.db_paths)
+        
+        for file_path in file_paths:
+            try:
+                print(f"\nProcessing file: {file_path}")
+                
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    text = file.read()
+                
+                print("Splitting document into chunks...")
+                chunks = self.text_splitter.split_text(text)
+                print(f"Created {len(chunks)} text chunks")
+                
+                batch_count = (len(chunks) + self.batch_size - 1) // self.batch_size
+                print(f"Processing {batch_count} batches...")
+                
+                for batch_idx in range(0, len(chunks), self.batch_size):
+                    current_batch = chunks[batch_idx:batch_idx + self.batch_size]
+                    current_batch_num = batch_idx // self.batch_size + 1
                     
-                    # Divide il testo in chunk
-                    chunks = self.text_splitter.split_text(content)
-                    
-                    # Calcola il numero di batch necessari
-                    num_batches = (len(chunks) + self.batch_size - 1) // self.batch_size
-                    
-                    print(f"Numero di batch: {num_batches}")
-                    
-                    # Itera attraverso i chunk in batch
-                    for batch_idx in range(num_batches):
-                        start_idx = batch_idx * self.batch_size
-                        end_idx = min((batch_idx + 1) * self.batch_size, len(chunks))
-                        batch_chunks = chunks[start_idx:end_idx]
-                        
-                        print(f"Batch {batch_idx}")
-                        
-                        # Crea una lista di Documenti con contenuto e metadata
-                        batch_docs = [
-                            {
-                                'text': chunk,
-                                'metadata': {
-                                    'source': file_path,
-                                    'chunk_index': idx + start_idx
-                                }
+                    docs = [
+                        Document(
+                            page_content=chunk,
+                            metadata={
+                                "source": file_path,
+                                "chunk_id": total_chunks_processed + idx,
+                                "batch_number": batch_number
                             }
-                            for idx, chunk in enumerate(batch_chunks)
-                        ]
-                        
-                        # Crea il database per il batch corrente
-                        batch_path = self._create_db_for_batch(batch_docs, batch_idx)
-                        
-                        if batch_path:
-                            # Aggiorna il conteggio totale dei chunk processati
-                            total_chunks_processed += len(batch_chunks)
-                            
-                            # Pulisce la memoria dopo ogni batch
-                            self._clear_memory()
-                        
-                except Exception as e:
-                    print(f"Errore nel processamento del file {file_path}: {str(e)}")
+                        )
+                        for idx, chunk in enumerate(current_batch)
+                    ]
+                    
+                    if self._create_db_for_batch(docs, batch_number):
+                        total_chunks_processed += len(current_batch)
+                        print(f"Processed batch {current_batch_num}/{batch_count} "
+                              f"- Total chunks: {total_chunks_processed}")
+                        batch_number += 1
+                    else:
+                        print(f"Failed to process batch {current_batch_num}")
+                    
+                    self._clear_memory()
+                
+                print(f"Completed processing file: {file_path}")
+                
+            except Exception as file_error:
+                print(f"Error processing file {file_path}: {file_error}")
+                continue
+            finally:
+                self._clear_memory()
+
+        print(f"\nSuccessfully processed {total_chunks_processed} total chunks")
+        return total_chunks_processed > 0
+
+    def similarity_search(self, query, k=3):
+        """Cerca nei database disponibili e combina i risultati usando uno score di similarità"""
+        if not self.db_paths:
+            return []
+            
+        all_results = []
+        # Aumentiamo il numero di risultati per database per avere più candidati
+        results_per_db = k * 2  
+        
+        try:
+            # Cerca in ogni database
+            for db_path in self.db_paths:
+                try:
+                    vector_store = Chroma(
+                        persist_directory=db_path,
+                        embedding_function=self.embedding_function
+                    )
+                    
+                    # Esegui la ricerca con score di similarità
+                    results_with_scores = vector_store.similarity_search_with_score(
+                        query, 
+                        k=results_per_db
+                    )
+                    
+                    # Aggiungi i risultati con i loro score
+                    for doc, score in results_with_scores:
+                        all_results.append((doc, score))
+                    
+                    del vector_store
+                    self._clear_memory()
+                    
+                except Exception as db_error:
+                    print(f"Error searching in database {db_path}: {db_error}")
                     continue
             
-            print(f"Processamento completato. Totale chunks processati: {total_chunks_processed}")
-            # Chiudi eventuali database aperti
-            if self.current_db is not None:
-                try:
-                    self.current_db = None
-                except:
-                    pass   
-                
-            return True
-
-        except Exception as e:
-            print(f"Errore durante il processamento dei documenti: {str(e)}")
-            return False
-        
-                
-        
-
-    def configure(self, chunk_size=None, chunk_overlap=None, batch_size=None):
-        """Configura i parametri del processore"""
-        if chunk_size is not None:
-            self.chunk_size = chunk_size
-            self.text_splitter = RecursiveCharacterTextSplitter(
-                chunk_size=self.chunk_size,
-                chunk_overlap=self.chunk_overlap,
-                separators=["\n\n", "\n", " ", ""]
-            )
-        
-        if chunk_overlap is not None:
-            self.chunk_overlap = chunk_overlap
-            self.text_splitter = RecursiveCharacterTextSplitter(
-                chunk_size=self.chunk_size,
-                chunk_overlap=self.chunk_overlap,
-                separators=["\n\n", "\n", " ", ""]
-            )
-        
-        if batch_size is not None:
-            self.batch_size = batch_size
-
-    def load_database(self, db_path=None):
-        """
-        Carica un database esistente. Se db_path non è specificato,
-        tenta di caricare l'ultimo database creato.
-        """
-        try:
-            # Se non viene specificato un percorso, usa l'ultimo database creato
-            if db_path is None:
-                if not self.db_paths:
-                    raise ValueError("Nessun database disponibile")
-                db_path = self.db_paths[-1]
+            # Ordina tutti i risultati per score di similarità (score più basso = più rilevante)
+            all_results.sort(key=lambda x: x[1])
             
-            # Verifica che il percorso esista
-            if not os.path.exists(db_path):
-                raise ValueError(f"Il percorso del database non esiste: {db_path}")
+            # Prendi i top k risultati
+            top_results = [doc for doc, _ in all_results[:k]]
             
-            # Carica il database
-            self.current_db = Chroma(
-                persist_directory=db_path,
-                embedding_function=self.embedding_function
-            )
-            self.current_db_path = db_path
-            print(f"Database caricato con successo da: {db_path}")
-            return True
+            # Debug: stampa informazioni sui risultati selezionati
+            print(f"\nSelected {len(top_results)} most relevant chunks from {len(all_results)} total candidates")
+            for i, doc in enumerate(top_results, 1):
+                print(f"\nChunk {i}:")
+                print(f"Batch: {doc.metadata.get('batch_number')}")
+                print(f"Chunk ID: {doc.metadata.get('chunk_id')}")
+                print(f"Source: {doc.metadata.get('source')}")
+            
+            return top_results
             
         except Exception as e:
-            print(f"Errore nel caricamento del database: {str(e)}")
-            return False
+            print(f"Error during similarity search: {e}")
+            return []
+        finally:
+            self._clear_memory()
 
-    def get_latest_database_path(self):
-        """Restituisce il percorso dell'ultimo database creato"""
-        if not self.db_paths:
-            return None
-        return self.db_paths[-1]
+    def get_total_chunks(self):
+        return len(self.db_paths) * self.batch_sizeù
+    
+    def load_database(self):
+        self.db_paths = [
+            os.path.join(self.base_directory, d) 
+            for d in os.listdir(self.base_directory) 
+            if os.path.isdir(os.path.join(self.base_directory, d))
+        ]

@@ -4,6 +4,7 @@ from audio.player import AudioPlayer
 from chat.history_manager import ChatHistoryManager
 from chat.llm_manager import LLMManager
 from config.config_Meta_Llama_3_1_8B_Instruct_Q4_K_M import config
+from rag.document_processor import DocumentProcessor
 
 class Chatbot:
     def __init__(self, use_audio=False, stream=False, preload_audio=False):
@@ -14,14 +15,20 @@ class Chatbot:
         try:
             self.current_history = self.history_manager.load_history("default")
         except ValueError:
-            self.current_history = self.history_manager.create_history("default")
-            
+            # Check if the history already exists before creating it
+            if not self.history_manager.history_exists("default"):
+                self.current_history = self.history_manager.create_history("default")
+            else:
+                self.current_history = self.history_manager.load_history("default")
+        
         self.llm_manager = LLMManager()
         
         if use_audio or preload_audio:   
             self.audio_recorder = AudioRecorder()
             self.audio_transcriber = AudioTranscriber()
             self.audio_player = AudioPlayer()
+        
+        self.document_rag = DocumentProcessor()
 
     def get_user_input(self):
         if self.use_audio:
@@ -32,17 +39,33 @@ class Chatbot:
     def generate_response(self, user_input, stream=False, reproduce_audio=False):
         self.current_history.append("user", user_input)
         
-        for token, full_response in self.llm_manager.generate_response(
-            self.current_history.get_tokenized_context(config["inference_params"]["pre_prompt"], 2048),
-            stream=stream
-        ):
-            yield token, full_response
-        
-        if reproduce_audio and self.use_audio:
-            self.audio_player.play(full_response)
+        # Esegui la ricerca nel database Chroma
+        try:
+             # Recupera i documenti rilevanti
+            relevant_docs = self.document_rag.similarity_search(user_input)
             
-        self.current_history.append("assistant", full_response)
-        return full_response
+            if not relevant_docs:
+                print("No relevant documents found")
+                context = "Nessun documento rilevante trovato."
+            else:
+                # Concatenare i contenuti dei documenti
+                context = "\n\n".join([doc.page_content for doc in relevant_docs])
+        except Exception as e:
+            context = f"Errore nella ricerca nel database: {str(e)}\n"
+            
+        self.current_history.append("system", context)
+
+        # Converti context in una lista per la concatenazione
+        full_context = self.current_history.get_tokenized_context(config["inference_params"]["pre_prompt"], 2048)
+
+        for token, llm_response in self.llm_manager.generate_response(full_context, stream=stream):
+            yield token, llm_response
+
+        if reproduce_audio and self.use_audio:
+            self.audio_player.play(llm_response)
+
+        self.current_history.append("assistant", llm_response)
+        return llm_response
         
     # Nuovi metodi per gestire le chat history
     def create_new_chat(self, name: str):
@@ -77,6 +100,10 @@ class Chatbot:
     def is_stream_enabled(self):
         return self.stream
 
+    def process_documents(self, file_paths):
+        """Processa i documenti forniti e li aggiunge al database"""
+        self.document_rag.process_documents(file_paths)
+
     def run(self):
         print("Benvenuto nel chatbot. Comandi disponibili:")
         print("- 'exit' per uscire")
@@ -84,6 +111,7 @@ class Chatbot:
         print("- '/load nome' per caricare una chat")
         print("- '/list' per vedere le chat disponibili")
         print("- '/delete nome' per eliminare una chat")
+        print("- '/process <file_paths>' per processare documenti")
         
         while True:
             user_input = self.get_user_input()
@@ -122,9 +150,16 @@ class Chatbot:
                     else:
                         print(f"Chat non trovata: {parts[1]}")
                     continue
-            
+                    
+                elif command == '/process' and len(parts) > 1:
+                    file_paths = parts[1].split(',')
+                    self.process_documents(file_paths)
+                    continue
+
             if "exit" in user_input.lower():
                 break
+            
+            print("user_input: ", user_input)
             
             # Gestione normale del messaggio
             for token, full_response in self.generate_response(user_input, stream=self.stream):

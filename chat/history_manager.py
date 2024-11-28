@@ -63,3 +63,7 @@ class ChatHistoryManager:
         metadata_path = os.path.join(self._get_history_path(name), 'metadata.json')
         with open(metadata_path, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=2)
+    
+    def history_exists(self, name: str) -> bool:
+        """Checks if a chat history with the given name exists"""
+        return os.path.exists(self._get_history_path(name))
