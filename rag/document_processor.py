@@ -7,11 +7,11 @@ from transformers import GPT2TokenizerFast
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain.schema import Document
+import json  # Assicurati di importare il modulo json
 
 class DocumentProcessor:
     def __init__(self):
         self.base_directory = "chromadb"
-        self.prefix_db_path = "chroma_"
         self.suffix_db_path = "_db_"
         
         self.embedding_function = HuggingFaceEmbeddings(
@@ -22,13 +22,15 @@ class DocumentProcessor:
         tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
         self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=100,  # chunk_size=100 e chunk_overlap=50 sono valori adatti per la ricerca precisa ad esempio in elenchi. Per catturare più contesto per documenti descrittivi si consigliano valori più alti, ad esempio chunk_size=500 e chunk_overlap=200
-            chunk_overlap=50,
+            chunk_size=500,  # chunk_size=100 e chunk_overlap=50 sono valori adatti per la ricerca precisa ad esempio in elenchi. Per catturare più contesto per documenti descrittivi si consigliano valori più alti, ad esempio chunk_size=500 e chunk_overlap=200
+            chunk_overlap=200,
             length_function=lambda text: len(tokenizer.encode(text)),
             separators=["\n\n", "\n", ".", "!", "?", ",", " "]
         )
         self.batch_size = 20
         self.db_paths = []
+        
+        self.load_database()
 
 
     def _clear_memory(self):
@@ -37,16 +39,44 @@ class DocumentProcessor:
         gc.collect()
         gc.collect()
 
-    def initialize_new_database(self):
-        """Inizializza una nuova directory del database con timestamp"""
-        timestamp = time.strftime("%Y%m%d_%H%M%S")
-        self.base_directory = f"chroma_dbs_{timestamp}"
-        os.makedirs(self.base_directory, exist_ok=True)
-        return self.base_directory
+    def create_metadata_file(self, safe_file_name, db_name, timestamp, original_file_path):
+        """Crea un file metadata in formato JSON con informazioni sul database"""
+        metadata = {
+            "file_name": safe_file_name,
+            "db_name": db_name,
+            "original_file_path": original_file_path,
+            "creation_date": timestamp,
+        }
+        
+        # Crea il percorso per il file metadata
+        metadata_dir = os.path.join(self.base_directory, db_name)
+        os.makedirs(metadata_dir, exist_ok=True)  # Crea la directory se non esiste
+        
+        metadata_file_path = os.path.join(metadata_dir, "metadata.json")
+        
+        with open(metadata_file_path, 'w', encoding='utf-8') as metadata_file:
+            json.dump(metadata, metadata_file, ensure_ascii=False, indent=4)
+        
+        print(f"Metadata file created: {metadata_file_path}")
 
-    def _create_db_for_batch(self, docs, batch_number):
+    def initialize_new_database(self, file_name):
+        """Inizializza una nuova directory del database con timestamp e nome del file"""
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        # Estrai solo il nome del file senza estensione
+        safe_file_name = os.path.splitext(os.path.basename(file_name))[0]
+        # Rimuovi caratteri non validi dal nome del file
+        safe_file_name = "".join(c for c in safe_file_name if c.isalnum() or c in (' ', '_')).rstrip()
+        db_name = f"{safe_file_name}{self.suffix_db_path}{timestamp}"
+        os.makedirs(self.base_directory, exist_ok=True)
+        
+        # Crea il file metadata
+        self.create_metadata_file(safe_file_name, db_name, timestamp, file_name)
+        
+        return db_name  # Restituisce il nome del database
+
+    def _create_db_for_batch(self, db_name, docs, batch_number):
         try:
-            db_path = os.path.join(self.base_directory, f"db_batch_{batch_number}")
+            db_path = os.path.join(self.base_directory, db_name, f"db_batch_{batch_number}")
             
             vector_store = Chroma.from_documents(
                 documents=docs,
@@ -67,8 +97,8 @@ class DocumentProcessor:
             return False
         
         # Inizializza una nuova directory del database prima di processare i documenti
-        self.initialize_new_database()
-        print(f"Creating new database in: {self.base_directory}")
+        db_name = self.initialize_new_database(file_paths[0])
+        print(f"Creating new database in: {db_name}")
             
         total_chunks_processed = 0
         batch_number = len(self.db_paths)
@@ -103,7 +133,7 @@ class DocumentProcessor:
                         for idx, chunk in enumerate(current_batch)
                     ]
                     
-                    if self._create_db_for_batch(docs, batch_number):
+                    if self._create_db_for_batch(db_name, docs, batch_number):
                         total_chunks_processed += len(current_batch)
                         print(f"Processed batch {current_batch_num}/{batch_count} "
                               f"- Total chunks: {total_chunks_processed}")
@@ -129,9 +159,7 @@ class DocumentProcessor:
         if not self.db_paths:
             return []
             
-        all_results = []
-        # Aumentiamo il numero di risultati per database per avere più candidati
-        results_per_db = k * 2  
+        all_results = [] 
         
         try:
             # Cerca in ogni database
@@ -145,7 +173,7 @@ class DocumentProcessor:
                     # Esegui la ricerca con score di similarità
                     results_with_scores = vector_store.similarity_search_with_score(
                         query, 
-                        k=results_per_db
+                        k=k
                     )
                     
                     # Aggiungi i risultati con i loro score
@@ -184,9 +212,31 @@ class DocumentProcessor:
     def get_total_chunks(self):
         return len(self.db_paths) * self.batch_sizeù
     
-    def load_database(self):
-        self.db_paths = [
-            os.path.join(self.base_directory, d) 
-            for d in os.listdir(self.base_directory) 
-            if os.path.isdir(os.path.join(self.base_directory, d))
-        ]
+    def load_database(self, db_name=None):
+        """Carica il database specificato o il primo database disponibile nella base_directory"""
+        try:
+            # Ottieni la lista delle directory nel base_directory
+            db_directories = [d for d in os.listdir(self.base_directory) if os.path.isdir(os.path.join(self.base_directory, d))]
+            
+            if not db_directories:
+                print("Nessun database disponibile da caricare.")
+                return None
+            
+            if db_name is None:
+                db_path = os.path.join(self.base_directory, db_directories[0])
+            else:
+                db_path = os.path.join(self.base_directory, db_name)
+            
+            print(f"Caricando il database: {db_path}")
+            
+            
+            db_batch_paths = [os.path.join(db_path, d) for d in os.listdir(db_path) if d.startswith("db_batch_") and os.path.isdir(os.path.join(db_path, d))]
+            
+            # Carica il database (puoi aggiungere qui la logica per caricare il database)
+            #vector_store = Chroma(persist_directory=db_path, embedding_function=self.embedding_function)
+            self.db_paths = db_batch_paths 
+
+        except Exception as e:
+            print(f"Errore durante il caricamento del database: {e}")
+            return None
+    

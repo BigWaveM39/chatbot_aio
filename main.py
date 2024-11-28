@@ -56,7 +56,7 @@ class Chatbot:
         self.current_history.append("system", context)
 
         # Converti context in una lista per la concatenazione
-        full_context = self.current_history.get_tokenized_context(config["inference_params"]["pre_prompt"], 2048)
+        full_context = self.current_history.get_tokenized_context(config["inference_params"]["pre_prompt"])
 
         for token, llm_response in self.llm_manager.generate_response(full_context, stream=stream):
             yield token, llm_response

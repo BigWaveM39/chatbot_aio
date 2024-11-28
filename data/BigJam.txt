@@ -1,0 +1,98 @@
+
+# EVENTO: BIG JAM
+
+La **Big Jam** è un evento creativo unico nel suo genere, progettato per stimolare la collaborazione, l'innovazione e la sperimentazione. In un intenso fine settimana, i partecipanti lavorano in team multidisciplinari per trasformare idee in progetti concreti. Che si tratti di videogiochi, animazioni, esperienze interattive o opere audiovisive, ogni creazione nasce dall'unione di competenze diverse e dalla passione per l'arte e la tecnologia. È un'occasione per imparare, mettersi alla prova e creare qualcosa di straordinario insieme.
+
+## DOVE
+**BigRock**, la scuola di riferimento in Italia per le arti digitali. Situata a Roncade, vicino a Treviso, BigRock è un centro di formazione avanzato per aspiranti artisti 3D, game developer, sound designer e concept artist. Con un ambiente dinamico, laboratori tecnologicamente all'avanguardia e uno spirito di continua innovazione, BigRock è il luogo ideale per stimolare la creatività e la collaborazione.
+
+## ORARI
+- **Inizio:** Venerdì 29 Novembre 2024, ore 20:00  
+  L'evento parte con l'annuncio del tema della jam e la formazione dei gruppi.  
+- **Fine:** Domenica 1 Dicembre 2024, ore 19:30  
+  Si conclude con la presentazione ufficiale dei progetti e una celebrazione finale.
+
+## DIVISIONE MASTER
+1. Computer Grafica, Concept Art
+2. Coding, Sound, Game
+
+## TEMA
+(Ancora da definire)
+
+## NUMERO GRUPPI
+(Numero da definire)
+
+# GRUPPI, COMPONENTI e proprio master
+
+## GRUPPI MASTER COMPUTER GRAFICA E CONCEPT ART
+### GRUPPO 1
+- **Nome gruppo:** Tony
+  - Antonio (Computer Grafica)
+  - Raffaele (Concept Art)
+  - Lorenzo (Computer Grafica)
+  - Ana (Concept Art)
+
+### GRUPPO 2
+- **Nome gruppo:**
+  - nome1 (Computer Grafica, Concept Art)
+  - nome2 (Computer Grafica, Concept Art)
+  - nome3 (Computer Grafica, Concept Art)
+  - nome4 (Computer Grafica, Concept Art)
+
+## GRUPPI MASTER CODING, SOUND E GAME
+### GRUPPO 3
+- **Nome gruppo:**
+  - nome1 (Coding, Sound, Game)
+  - nome2 (Coding, Sound, Game)
+  - nome3 (Coding, Sound, Game)
+  - nome4 (Coding, Sound, Game)
+
+### GRUPPO 4
+- **Nome gruppo:**
+  - nome1 (Coding, Sound, Game)
+  - nome2 (Coding, Sound, Game)
+  - nome3 (Coding, Sound, Game)
+  - nome4 (Coding, Sound, Game)
+
+### GRUPPO 5
+- **Nome gruppo:**
+  - nome1 (Coding, Sound, Game)
+  - nome2 (Coding, Sound, Game)
+  - nome3 (Coding, Sound, Game)
+  - nome4 (Coding, Sound, Game)
+
+# STATO GRUPPI
+- **GRUPPO 1:** (Cosa stanno facendo)
+- **GRUPPO 2:** (Cosa stanno facendo)
+- **GRUPPO 3:** (Cosa stanno facendo)
+- **GRUPPO 4:** (Cosa stanno facendo)
+- **GRUPPO 5:** (Cosa stanno facendo)
+
+# SCADENZE CONSIGLIATE
+- **Sabato 29, ore 12:00:** Revisione del concept iniziale.
+- **Sabato 29, ore 20:00:** Presentazione della prima versione giocabile.
+- **Domenica 1, ore 15:00:** Ultimi test e debug.
+
+# REGOLE
+1. Tutti i lavori devono essere consegnati entro domenica alle 19:30.
+2. È vietato usare asset non originali senza autorizzazione.
+3. È vietato usare pc personali e progetti già pronti.
+4. Ogni gruppo ha libera organizzazione.
+5. È consentito uscire da scuola.
+
+# RISORSE
+- Strumenti consigliati:
+  - Unity
+  - Unreal Engine
+  - Photoshop
+  - Audacity
+
+# FAQ
+- **Q:** Dove trovo il tema della jam?  
+  **A:** Sarà annunciato all'inizio dell'evento.
+
+- **Q:** Come posso contattare un altro gruppo?  
+  **A:** Puoi usare il canale Discord ufficiale.
+
+# AGGIORNAMENTI LIVE
+- **Venerdì 28, 20:30:** La jam è ufficialmente iniziata!

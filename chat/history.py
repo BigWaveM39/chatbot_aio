@@ -6,6 +6,8 @@ class ChatHistory:
     def __init__(self, history_dir: str):
         self.history_dir = history_dir
         self.history = []
+        self.max_tokens = 2048
+        self.reserved_tokens = 500
         self.encoding = tiktoken.get_encoding("cl100k_base")
         self.history = self._load_all_history()
         
@@ -19,16 +21,16 @@ class ChatHistory:
         self.history = []
         self._save_history()
 
-    def get_tokenized_context (self, preprompt: str, max_tokens: int = 2048) -> list:
+    def get_tokenized_context (self, preprompt: str) -> list:
         # Calcola i token del preprompt
         preprompt_tokens = self._num_tokens_from_string(preprompt)
         
         # Verifica che il preprompt non superi già il limite
-        if preprompt_tokens >= max_tokens:
-            raise ValueError(f"Il preprompt è troppo lungo ({preprompt_tokens} token). Massimo consentito: {max_tokens} token")
+        if preprompt_tokens >= self.max_tokens:
+            raise ValueError(f"Il preprompt è troppo lungo ({preprompt_tokens} token). Massimo consentito: {self.max_tokens} token")
         
         # Tokens disponibili per la history
-        available_tokens = max_tokens - preprompt_tokens
+        available_tokens = self.max_tokens - self.reserved_tokens - preprompt_tokens
         
         # Crea la lista risultante iniziando con il preprompt
         result = [{'role': 'system', 'content': preprompt}]
