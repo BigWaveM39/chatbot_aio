@@ -1,0 +1,10 @@
+torch
+pyttsx3
+PyQt5
+flask
+tiktoken
+llama-cpp-python
+langchain_-community
+transformers
+chromadb
+sentence-transformers
