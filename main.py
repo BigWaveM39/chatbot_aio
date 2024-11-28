@@ -1,6 +1,6 @@
-from audio.recorder import AudioRecorder
-from audio.transcriber import AudioTranscriber
-from audio.player import AudioPlayer
+# from audio.recorder import AudioRecorder
+# from audio.transcriber import AudioTranscriber
+# from audio.player import AudioPlayer
 from chat.history_manager import ChatHistoryManager
 from chat.llm_manager import LLMManager
 from config.config_Meta_Llama_3_1_8B_Instruct_Q4_K_M import config
@@ -23,10 +23,10 @@ class Chatbot:
         
         self.llm_manager = LLMManager()
         
-        if use_audio or preload_audio:   
-            self.audio_recorder = AudioRecorder()
-            self.audio_transcriber = AudioTranscriber()
-            self.audio_player = AudioPlayer()
+        # if use_audio or preload_audio:   
+        #     self.audio_recorder = AudioRecorder()
+        #     self.audio_transcriber = AudioTranscriber()
+        #     self.audio_player = AudioPlayer()
         
         self.document_rag = DocumentProcessor()
 
