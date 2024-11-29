@@ -39,22 +39,29 @@ class Chatbot:
     def generate_response(self, user_input, stream=False, reproduce_audio=False):
         self.current_history.append("user", user_input)
         
+        pre_prompt = config["inference_params"]["pre_prompt"]
+        
         # Esegui la ricerca nel database Chroma
         try:
-             # Recupera i documenti rilevanti
-            relevant_docs = self.document_rag.similarity_search(user_input)
-            
-            if not relevant_docs:
-                print("No relevant documents found")
+            # Recupera i documenti rilevanti
+            if user_input.strip():  # Check if input is not empty or just whitespace
+                relevant_docs = self.document_rag.similarity_search(user_input)
+                
+                if not relevant_docs:
+                    print("No relevant documents found")
+                else:
+                    # Concatenare i contenuti dei documenti
+                    context = "\n\n".join(["Risultati della ricerca:", *[doc.page_content for doc in relevant_docs]])
+                    summary = self.summarize_context(pre_prompt, context, user_input)
+                    self.current_history.append("system", summary)
             else:
-                # Concatenare i contenuti dei documenti
-                context = "\nRisultati della ricerca:\n".join([doc.page_content for doc in relevant_docs])
-                self.current_history.append("system", context)
+                print("Input vuoto: saltando la ricerca nel database")
+                
         except Exception as e:
             print(f"Errore nella ricerca nel database: {str(e)}\n")
             
         # Converti context in una lista per la concatenazione
-        full_context = self.current_history.get_tokenized_context(config["inference_params"]["pre_prompt"])
+        full_context = self.current_history.get_tokenized_context(pre_prompt)
 
         for token, llm_response in self.llm_manager.generate_response(full_context, stream=stream):
             yield token, llm_response
@@ -64,6 +71,52 @@ class Chatbot:
 
         self.current_history.append("assistant", llm_response)
         return llm_response
+        
+    def summarize_context(self, pre_prompt: str, context: str, user_input: str):
+        summary_prompt = "Estrai le informazioni rilevanti dal contesto e riassumi in modo schematico senza perdere informazioni. Non aggiungere nulla al di fuori del contesto."
+        
+        # Calcola prima i token dei messaggi fissi
+        base_messages = [
+            {"role": "system", "content": pre_prompt},
+            {"role": "user", "content": user_input},
+            {"role": "system", "content": summary_prompt}
+        ]
+        base_tokens = self.current_history._count_tokens(base_messages)
+        max_allowed = 2048
+        
+        # Calcola i token disponibili per il contesto
+        available_tokens = max_allowed - base_tokens
+        
+        # Verifica e tronca il contesto se necessario
+        context_message = [{"role": "system", "content": context}]
+        context_tokens = self.current_history._count_tokens(context_message)
+        
+        if context_tokens > available_tokens:
+            # Tronca il contesto mantenendo solo la prima parte che rientra nei token disponibili
+            words = context.split()
+            truncated_context = ""
+            current_message = [{"role": "system", "content": ""}]
+            
+            for word in words:
+                test_context = truncated_context + " " + word
+                current_message[0]["content"] = test_context
+                if self.current_history._count_tokens(current_message) > available_tokens:
+                    break
+                truncated_context = test_context
+            
+            context = truncated_context.strip()
+            print(f"Contesto troncato per rispettare il limite di token")
+        
+        # Prepara i messaggi finali
+        messages = base_messages[:-1]  # Escludi summary_prompt dalla posizione iniziale
+        messages.append({"role": "system", "content": context})
+        messages.append({"role": "system", "content": summary_prompt})
+        
+        final_response = ""
+        for _, llm_response in self.llm_manager.generate_response(messages, stream=False):
+            final_response = llm_response
+            
+        return final_response
         
     # Nuovi metodi per gestire le chat history
     def create_new_chat(self, name: str):
