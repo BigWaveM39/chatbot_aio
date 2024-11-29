@@ -46,15 +46,13 @@ class Chatbot:
             
             if not relevant_docs:
                 print("No relevant documents found")
-                context = "Nessun documento rilevante trovato."
             else:
                 # Concatenare i contenuti dei documenti
-                context = "\n\n".join([doc.page_content for doc in relevant_docs])
+                context = "\nRisultati della ricerca:\n".join([doc.page_content for doc in relevant_docs])
+                self.current_history.append("system", context)
         except Exception as e:
-            context = f"Errore nella ricerca nel database: {str(e)}\n"
+            print(f"Errore nella ricerca nel database: {str(e)}\n")
             
-        self.current_history.append("system", context)
-
         # Converti context in una lista per la concatenazione
         full_context = self.current_history.get_tokenized_context(config["inference_params"]["pre_prompt"])
 
@@ -158,8 +156,6 @@ class Chatbot:
 
             if "exit" in user_input.lower():
                 break
-            
-            print("user_input: ", user_input)
             
             # Gestione normale del messaggio
             for token, full_response in self.generate_response(user_input, stream=self.stream):

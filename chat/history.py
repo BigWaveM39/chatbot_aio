@@ -7,7 +7,7 @@ class ChatHistory:
         self.history_dir = history_dir
         self.history = []
         self.max_tokens = 2048
-        self.reserved_tokens = 500
+        self.reserved_tokens = 300
         self.encoding = tiktoken.get_encoding("cl100k_base")
         self.history = self._load_all_history()
         
@@ -44,7 +44,7 @@ class ChatHistory:
             if current_tokens + message_tokens > available_tokens:
                 break
                 
-            # Altrimenti, aggiungiamo il messaggio all'inizio della lista (dopo il preprompt)
+            # Aggiungiamo il messaggio in posizione 1, subito dopo il preprompt
             result.insert(1, message)
             current_tokens += message_tokens
             

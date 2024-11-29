@@ -23,7 +23,7 @@ class LLMManager:
     def _generate_single_response(self, messages):
         response = self.llm.create_chat_completion(
             messages=messages,
-            max_tokens=500,
+            max_tokens=300,
             temperature=config["inference_params"]["temp"]
         )
         yield "", response["choices"][0]["message"]["content"]
