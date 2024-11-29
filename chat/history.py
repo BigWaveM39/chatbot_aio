@@ -3,7 +3,8 @@ import json
 import os
 
 class ChatHistory:
-    def __init__(self, history_dir: str):
+    def __init__(self, name: str, history_dir: str):
+        self.name = name
         self.history_dir = history_dir
         self.history = []
         self.max_tokens = 2048

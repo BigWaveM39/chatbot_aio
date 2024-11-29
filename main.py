@@ -73,13 +73,13 @@ class Chatbot:
         return llm_response
         
     def summarize_context(self, pre_prompt: str, context: str, user_input: str):
-        summary_prompt = "Estrai le informazioni rilevanti dal contesto e riassumi in modo schematico senza perdere informazioni. Non aggiungere nulla al di fuori del contesto."
+        summary_prompt = "Estrai solo le informazioni rilevanti dal contesto e riassumi in modo schematico senza perdere informazioni. Se non trovi nulla di rilevante, non rispondi. Non aggiungere nulla al di fuori del contesto."
         
         # Calcola prima i token dei messaggi fissi
         base_messages = [
-            {"role": "system", "content": pre_prompt},
+            #{"role": "system", "content": pre_prompt},
+            {"role": "system", "content": summary_prompt},
             {"role": "user", "content": user_input},
-            {"role": "system", "content": summary_prompt}
         ]
         base_tokens = self.current_history._count_tokens(base_messages)
         max_allowed = 2048
@@ -108,12 +108,10 @@ class Chatbot:
             print(f"Contesto troncato per rispettare il limite di token")
         
         # Prepara i messaggi finali
-        messages = base_messages[:-1]  # Escludi summary_prompt dalla posizione iniziale
-        messages.append({"role": "system", "content": context})
-        messages.append({"role": "system", "content": summary_prompt})
+        base_messages.append({"role": "system", "content": context})
         
         final_response = ""
-        for _, llm_response in self.llm_manager.generate_response(messages, stream=False):
+        for _, llm_response in self.llm_manager.generate_response(base_messages, stream=False):
             final_response = llm_response
             
         return final_response
@@ -154,6 +152,12 @@ class Chatbot:
     def process_documents(self, file_paths):
         """Processa i documenti forniti e li aggiunge al database"""
         self.document_rag.process_documents(file_paths)
+        
+    def reset_conversation(self):
+        """Resetta la chat history corrente"""
+        name = self.current_history.name
+        self.history_manager.delete_history(name)
+        self.current_history = self.history_manager.create_history(name)
 
     def run(self):
         print("Benvenuto nel chatbot. Comandi disponibili:")
@@ -163,6 +167,7 @@ class Chatbot:
         print("- '/list' per vedere le chat disponibili")
         print("- '/delete nome' per eliminare una chat")
         print("- '/process <file_paths>' per processare documenti")
+        print("- '/reset' per resettare la conversazione")
         
         while True:
             user_input = self.get_user_input()
@@ -205,6 +210,11 @@ class Chatbot:
                 elif command == '/process' and len(parts) > 1:
                     file_paths = parts[1].split(',')
                     self.process_documents(file_paths)
+                    continue
+                
+                elif command == '/reset':
+                    self.reset_conversation()
+                    print("Conversazione resettata")
                     continue
 
             if "exit" in user_input.lower():
