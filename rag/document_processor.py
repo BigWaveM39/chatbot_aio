@@ -29,6 +29,7 @@ class DocumentProcessor:
         )
         self.batch_size = 20
         self.db_paths = []
+        self.vector_store = None
         
         self.load_database()
 
@@ -78,7 +79,7 @@ class DocumentProcessor:
         try:
             db_path = os.path.join(self.base_directory, db_name, f"db_batch_{batch_number}")
             
-            vector_store = Chroma.from_documents(
+            Chroma.from_documents(
                 documents=docs,
                 embedding=self.embedding_function,
                 persist_directory=db_path
@@ -154,10 +155,11 @@ class DocumentProcessor:
         print(f"\nSuccessfully processed {total_chunks_processed} total chunks")
         return total_chunks_processed > 0
 
-    def similarity_search(self, query, k=3):
+    def similarity_search(self, query, k=2):
         """Cerca nei database disponibili e combina i risultati usando uno score di similarità"""
-        if not self.db_paths:
-            return []
+        if not self.db_paths or not self.vector_store:
+            if not self.load_database():
+                return []
             
         all_results = [] 
         
@@ -165,13 +167,9 @@ class DocumentProcessor:
             # Cerca in ogni database
             for db_path in self.db_paths:
                 try:
-                    vector_store = Chroma(
-                        persist_directory=db_path,
-                        embedding_function=self.embedding_function
-                    )
-                    
+
                     # Esegui la ricerca con score di similarità
-                    results_with_scores = vector_store.similarity_search_with_score(
+                    results_with_scores = self.vector_store.similarity_search_with_score(
                         query, 
                         k=k
                     )
@@ -179,9 +177,6 @@ class DocumentProcessor:
                     # Aggiungi i risultati con i loro score
                     for doc, score in results_with_scores:
                         all_results.append((doc, score))
-                    
-                    del vector_store
-                    self._clear_memory()
                     
                 except Exception as db_error:
                     print(f"Error searching in database {db_path}: {db_error}")
@@ -206,21 +201,24 @@ class DocumentProcessor:
         except Exception as e:
             print(f"Error during similarity search: {e}")
             return []
-        finally:
-            self._clear_memory()
 
     def get_total_chunks(self):
         return len(self.db_paths) * self.batch_sizeù
     
-    def load_database(self, db_name=None):
+    def load_database(self, db_name=None) -> bool:
         """Carica il database specificato o il primo database disponibile nella base_directory"""
+        
         try:
             # Ottieni la lista delle directory nel base_directory
             db_directories = [d for d in os.listdir(self.base_directory) if os.path.isdir(os.path.join(self.base_directory, d))]
             
             if not db_directories:
                 print("Nessun database disponibile da caricare.")
-                return None
+                return False
+            
+            self.vector_store = None
+            self.db_paths = []
+            self._clear_memory()
             
             if db_name is None:
                 db_path = os.path.join(self.base_directory, db_directories[0])
@@ -229,14 +227,14 @@ class DocumentProcessor:
             
             print(f"Caricando il database: {db_path}")
             
+            self.db_paths = [os.path.join(db_path, d) for d in os.listdir(db_path) if d.startswith("db_batch_") and os.path.isdir(os.path.join(db_path, d))]
             
-            db_batch_paths = [os.path.join(db_path, d) for d in os.listdir(db_path) if d.startswith("db_batch_") and os.path.isdir(os.path.join(db_path, d))]
+            for db_batch_path in self.db_paths:
+                # Carica il database (puoi aggiungere qui la logica per caricare il database)
+                self.vector_store = Chroma(persist_directory=db_batch_path, embedding_function=self.embedding_function)
+                
+            return True
             
-            # Carica il database (puoi aggiungere qui la logica per caricare il database)
-            #vector_store = Chroma(persist_directory=db_path, embedding_function=self.embedding_function)
-            self.db_paths = db_batch_paths 
-
         except Exception as e:
             print(f"Errore durante il caricamento del database: {e}")
-            return None
-    
+            return False

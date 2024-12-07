@@ -14,17 +14,17 @@ class ChatHistoryManager:
         """Creates a new chat history with the given name"""
         history_dir = self._get_history_path(name)
         if os.path.exists(history_dir):
-            raise ValueError(f"Chat history '{name}' already exists")
+            print(f"Chat history '{name}' already exists")
+        else:   
+            os.makedirs(history_dir)
+            metadata = {
+                'name': name,
+                'created_at': datetime.now().isoformat(),
+                'last_modified': datetime.now().isoformat()
+            }
+            self._save_metadata(name, metadata)
         
-        os.makedirs(history_dir)
-        metadata = {
-            'name': name,
-            'created_at': datetime.now().isoformat(),
-            'last_modified': datetime.now().isoformat()
-        }
-        self._save_metadata(name, metadata)
-        
-        self.current_history = ChatHistory(history_dir)
+        self.current_history = ChatHistory(name, history_dir)
         return self.current_history
     
     def load_history(self, name: str) -> ChatHistory:
@@ -33,7 +33,7 @@ class ChatHistoryManager:
         if not os.path.exists(history_dir):
             raise ValueError(f"Chat history '{name}' does not exist")
         
-        self.current_history = ChatHistory(history_dir)
+        self.current_history = ChatHistory(name, history_dir)
         return self.current_history
     
     def delete_history(self, name: str) -> bool:

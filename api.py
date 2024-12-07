@@ -38,7 +38,7 @@ def reset_conversation():
     Endpoint per resettare la conversazione del chatbot
     """
     try:
-        # chatbot.reset_conversation()
+        chatbot.reset_conversation()
         return jsonify({
             'message': 'Conversazione resettata',
             'status': 'success'
